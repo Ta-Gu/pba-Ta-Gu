@@ -6,5 +6,5 @@
 
 
 
-![preview](screenshot of the triangle.jpg)
+![](screenshot of the triangle.jpg)
 
