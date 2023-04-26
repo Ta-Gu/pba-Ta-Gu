@@ -13,6 +13,9 @@
 #include "../src/pba_util_glfw.h"
 #include "../src/pba_util_gl.h"
 
+#include <iostream>
+
+
 /**
  * explicit time integration
  * @param p0 input radius and its velocity
@@ -35,13 +38,15 @@ Eigen::Vector2f time_integration_explicit(const Eigen::Vector2f& p0, float dt){
 Eigen::Vector2f time_integration_implicit(const Eigen::Vector2f& p0, float dt){
   const float r0 = p0.x(); // current radius
   const float v0 = p0.y(); // current radius velocity
-  const float dfdr = 2.f/(r0*r0*r0); // hint!
+  const float dfdr = 2.f/(r0*r0*r0); // hint!s
   float f0 = -1.0f / (r0*r0); // force
   Eigen::Matrix2f A;
   Eigen::Vector2f b;
   // modify the following two lines to implement implicit time integration
-  A << 1.f, 0.f, 0.f, 1.f;
-  b << r0, v0;
+  // A << (-dfdr*dt)*1.f, 1.f, 1.f, dt*-1.f;
+  // b << v0 + 3.f*dt*f0, r0;
+  A << -2.f*dt/(r0*r0*r0), 1.f, 1.f, dt*-1.f;
+  b << v0 - 3.f*dt/(r0*r0), r0;
   return A.inverse()*b;
 }
 
@@ -82,6 +87,7 @@ int main()
   {
     pba::default_window_2d(window);
 
+    // if( history_implicit.size() < 3000 ) {
     if( history_implicit.size() < 300 ) {
       phase_explicit = time_integration_explicit(phase_explicit, dt);
       phase_explicit = reflection(phase_explicit);
